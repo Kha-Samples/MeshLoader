@@ -1,17 +1,25 @@
 {
-	"format": 1,
-	"game":
-	{
-		"name": "Empty",
-		"width": 640,
-		"height": 480
+	"format": 2,
+	"game": {
+		"name": "MeshLoader",
+		"width": 800,
+		"height": 600
 	},
-	"assets":
-	[
-
+	"assets": [
+		{
+			"type": "blob",
+			"file": "body.ogex",
+			"name": "body"
+		}
 	],
-	"rooms":
-	[
-
+	"rooms": [
+		{
+			"name": "level1",
+			"parent": null,
+			"neighbours": [],
+			"assets": [
+				"body"
+			]
+		}
 	]
 }

@@ -40,7 +40,7 @@ class MeshLoader extends Game {
 	}
 	
 	private function start(): Void {
-		var data = new OgexData(Loader.the.getBlob('body').readUtf8String());
+		var data = new OgexData(Loader.the.getBlob('body').toString());
 		var vertices = data.geometryObjects[0].mesh.vertexArrays[0].values;
 		var normals = data.geometryObjects[0].mesh.vertexArrays[1].values;
 		var indices = data.geometryObjects[0].mesh.indexArray.values;

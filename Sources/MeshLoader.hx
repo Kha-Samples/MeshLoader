@@ -51,12 +51,12 @@ class MeshLoader extends Game {
 		vertexBuffer = new VertexBuffer(vertices.length, structure, Usage.StaticUsage);
 		var buffer = vertexBuffer.lock();
 		for (i in 0...Std.int(vertices.length / 3)) {
-			buffer[i * 6 + 0] = vertices[i * 3 + 0];
-			buffer[i * 6 + 1] = vertices[i * 3 + 1];
-			buffer[i * 6 + 2] = vertices[i * 3 + 2];
-			buffer[i * 6 + 3] = normals[i * 3 + 0];
-			buffer[i * 6 + 4] = normals[i * 3 + 1];
-			buffer[i * 6 + 5] = normals[i * 3 + 2];
+			buffer.set(i * 6 + 0, vertices[i * 3 + 0]);
+			buffer.set(i * 6 + 1, vertices[i * 3 + 1]);
+			buffer.set(i * 6 + 2, vertices[i * 3 + 2]);
+			buffer.set(i * 6 + 3, normals[i * 3 + 0]);
+			buffer.set(i * 6 + 4, normals[i * 3 + 1]);
+			buffer.set(i * 6 + 5, normals[i * 3 + 2]);
 		}
 		vertexBuffer.unlock();
 		

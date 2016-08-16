@@ -4,7 +4,7 @@ import kha.System;
 
 class Main {
 	public static function main() {
-		System.init("MeshLoader", 800, 600, init);
+		System.init({title: "MeshLoader", width: 800, height: 600}, init);
 	}
 
 	static function init() {

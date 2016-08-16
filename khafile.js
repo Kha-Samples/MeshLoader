@@ -1,7 +1,7 @@
-var project = new Project('MeshLoader');
+let project = new Project('MeshLoader');
 
 project.addSources('Sources');
 project.addShaders('Sources/Shaders/**');
 project.addAssets('Assets/**');
 
-return project;
+resolve(project);

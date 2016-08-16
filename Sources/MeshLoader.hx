@@ -14,13 +14,10 @@ import kha.graphics4.VertexShader;
 import kha.graphics4.VertexStructure;
 import kha.Assets;
 import kha.Shaders;
-import kha.math.Matrix4;
-import kha.math.Vector3;
-import kha.math.Vector4;
+import kha.math.FastMatrix4;
+import kha.math.FastVector3;
 import kha.Scheduler;
 import kha.System;
-
-using StringTools;
 
 class MeshLoader {
 	private var pipeline: PipelineState;
@@ -37,11 +34,11 @@ class MeshLoader {
 	}
 	
 	private function start(): Void {
-		var data = new OgexData(Assets.blobs.body.toString());
+		var data = new OgexData(Assets.blobs.body_ogex.toString());
 		var vertices = data.geometryObjects[0].mesh.vertexArrays[0].values;
 		var normals = data.geometryObjects[0].mesh.vertexArrays[1].values;
 		var indices = data.geometryObjects[0].mesh.indexArray.values;
-			
+		
 		var structure = new VertexStructure();
 		structure.add('pos', VertexData.Float3);
 		structure.add('normal', VertexData.Float3);
@@ -85,9 +82,9 @@ class MeshLoader {
 		g.clear(Color.Black, Math.POSITIVE_INFINITY);
 		if (started) {
 			g.setPipeline(pipeline);
-			g.setMatrix(projectionLocation, Matrix4.perspectiveProjection(45, System.pixelWidth / System.pixelHeight, 0.1, 1000));
-			g.setMatrix(viewLocation, Matrix4.lookAt(new Vector3(0, 0, -500), new Vector3(0, 0, 0), new Vector3(0, 1, 0)));
-			g.setMatrix(modelLocation, Matrix4.rotationY(Scheduler.time()));
+			g.setMatrix(projectionLocation, FastMatrix4.perspectiveProjection(45, System.windowWidth(0) / System.windowHeight(0), 0.1, 1000));
+			g.setMatrix(viewLocation, FastMatrix4.lookAt(new FastVector3(0, 0, -500), new FastVector3(0, 0, 0), new FastVector3(0, 1, 0)));
+			g.setMatrix(modelLocation, FastMatrix4.rotationY(Scheduler.time()));
 			
 			g.setIndexBuffer(indexBuffer);
 			g.setVertexBuffer(vertexBuffer);

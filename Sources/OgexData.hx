@@ -357,7 +357,7 @@ class OgexData extends Container {
 				case "BoneRefArray":
 					skel.boneRefArray = parseBoneRefArray(s);
 				case "Transform":
-					skel.transform = parseTransform(s);
+					skel.transforms = parseTransformArray(s);
 				case "}":
 					break;
 			}
@@ -371,6 +371,24 @@ class OgexData extends Container {
 		var ss = readLine2();
 		ss = StringTools.replace(ss, " ", "");
 		bra.refs = ss.split(",");
+		readLine2(); readLine2();
+		return bra;
+	}
+
+	function parseTransformArray(s:Array<String>):Array<Transform> {
+		var bra = new Array<Transform>();
+		readLine2(); readLine2(); readLine2();
+		while (true) {
+			var va =new Transform();
+			var ss = readLine2();
+			ss = StringTools.replace(ss, "{", "");
+			ss = StringTools.replace(ss, "}", "");
+			s = ss.split(",");
+			var offset = s[s.length - 1] == "" ? 1 : 0;
+			for (i in 0...s.length - offset) va.values.push(Std.parseFloat(s[i]));
+			bra.push(va);
+			if (offset == 0) break;
+		}
 		readLine2(); readLine2();
 		return bra;
 	}
@@ -493,6 +511,19 @@ class OgexData extends Container {
 		}
 		return col;
 	}
+	function parseTexture(s:Array<String>):Texture {
+		var texture = new Texture();
+		texture.attrib = s[3].split('"')[1];
+		readLine();
+		s = readLine();
+		var ss = s[1];
+		ss = StringTools.replace(ss, "{", "");
+		ss = StringTools.replace(ss, "}", "");
+		ss = StringTools.replace(ss, "\"", "");
+		texture.path=ss;
+		
+		return texture;
+	}
 
 	function parseAtten(s:Array<String>):Atten {
 		var a = new Atten();
@@ -547,6 +578,8 @@ class OgexData extends Container {
 					mat.name = parseName(s);
 				case "Color":
 					mat.colors.push(parseColor(s));
+				case "Texture":
+					mat.texture.push(parseTexture(s));
 				case "Param":
 					mat.params.push(parseParam(s));
 				case "}":
@@ -750,7 +783,15 @@ class Material {
 	public var ref:String;
 	public var name:String;
 	public var colors:Array<Color> = [];
+	public var texture:Array<Texture>=[];
 	public var params:Array<Param> = [];
+
+	public function new() {}
+}
+class Texture
+{
+	public var attrib:String;
+	public var path:String = "";
 
 	public function new() {}
 }
@@ -794,7 +835,7 @@ class Skin {
 class Skeleton {
 
 	public var boneRefArray:BoneRefArray;
-	public var transform:Transform;
+	public var transforms:Array<Transform>;
 
 	public function new() {}
 }

@@ -6,6 +6,7 @@ import kha.graphics4.CompareMode;
 import kha.graphics4.ConstantLocation;
 import kha.graphics4.IndexBuffer;
 import kha.graphics4.PipelineState;
+import kha.graphics4.TextureUnit;
 import kha.graphics4.Usage;
 import kha.graphics4.VertexBuffer;
 import kha.graphics4.VertexData;
@@ -25,6 +26,7 @@ class MeshLoader {
 	private var projectionLocation: ConstantLocation;
 	private var viewLocation: ConstantLocation;
 	private var modelLocation: ConstantLocation;
+	private var texUnit: TextureUnit;
 	private var started: Bool = false;
 	
 	public function new() {
@@ -32,23 +34,27 @@ class MeshLoader {
 	}
 	
 	private function start(): Void {
-		var data = new OgexData(Assets.blobs.body_ogex.toString());
+		var data = new OgexData(Assets.blobs.tiger_ogex.toString());
 		var vertices = data.geometryObjects[0].mesh.vertexArrays[0].values;
 		var normals = data.geometryObjects[0].mesh.vertexArrays[1].values;
+		var texcoords = data.geometryObjects[0].mesh.vertexArrays[2].values;
 		var indices = data.geometryObjects[0].mesh.indexArray.values;
 		
 		var structure = new VertexStructure();
-		structure.add('pos', VertexData.Float3);
-		structure.add('normal', VertexData.Float3);
+		structure.add("pos", VertexData.Float3);
+		structure.add("normal", VertexData.Float3);
+		structure.add("texcoord", VertexData.Float2);
 		vertexBuffer = new VertexBuffer(vertices.length, structure, Usage.StaticUsage);
 		var buffer = vertexBuffer.lock();
 		for (i in 0...Std.int(vertices.length / 3)) {
-			buffer.set(i * 6 + 0, vertices[i * 3 + 0]);
-			buffer.set(i * 6 + 1, vertices[i * 3 + 1]);
-			buffer.set(i * 6 + 2, vertices[i * 3 + 2]);
-			buffer.set(i * 6 + 3, normals[i * 3 + 0]);
-			buffer.set(i * 6 + 4, normals[i * 3 + 1]);
-			buffer.set(i * 6 + 5, normals[i * 3 + 2]);
+			buffer.set(i * 8 + 0, vertices[i * 3 + 0]);
+			buffer.set(i * 8 + 1, vertices[i * 3 + 1]);
+			buffer.set(i * 8 + 2, vertices[i * 3 + 2]);
+			buffer.set(i * 8 + 3, normals[i * 3 + 0]);
+			buffer.set(i * 8 + 4, normals[i * 3 + 1]);
+			buffer.set(i * 8 + 5, normals[i * 3 + 2]);
+			buffer.set(i * 8 + 6, texcoords[i * 2 + 0]);
+			buffer.set(i * 8 + 7, texcoords[i * 2 + 1]);
 		}
 		vertexBuffer.unlock();
 		
@@ -70,6 +76,7 @@ class MeshLoader {
 		projectionLocation = pipeline.getConstantLocation("projection");
 		viewLocation = pipeline.getConstantLocation("view");
 		modelLocation = pipeline.getConstantLocation("model");
+		texUnit = pipeline.getTextureUnit("image");
 		
 		started = true;
 	}
@@ -80,9 +87,10 @@ class MeshLoader {
 		g.clear(Color.Black, Math.POSITIVE_INFINITY);
 		if (started) {
 			g.setPipeline(pipeline);
-			g.setMatrix(projectionLocation, FastMatrix4.perspectiveProjection(45, System.windowWidth(0) / System.windowHeight(0), 0.1, 1000));
-			g.setMatrix(viewLocation, FastMatrix4.lookAt(new FastVector3(0, 0, -500), new FastVector3(0, 0, 0), new FastVector3(0, 1, 0)));
+			g.setMatrix(projectionLocation, FastMatrix4.perspectiveProjection(45, System.windowWidth(0) / System.windowHeight(0), 0.1, 50));
+			g.setMatrix(viewLocation, FastMatrix4.lookAt(new FastVector3(0, 0, -5), new FastVector3(0, 0, 0), new FastVector3(0, 1, 0)));
 			g.setMatrix(modelLocation, FastMatrix4.rotationY(Scheduler.time()));
+			g.setTexture(texUnit, Assets.images.tiger_atlas);
 			
 			g.setIndexBuffer(indexBuffer);
 			g.setVertexBuffer(vertexBuffer);
